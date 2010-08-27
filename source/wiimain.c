@@ -1802,9 +1802,7 @@ extern void set_my_cheat(int indx);
 BOOLEAN usergame;
 
 void I_StartFrame (void)
-{
-	// hermes
-    
+{	
 	event_t ev; // joystick event
 	event_t event; // keyboard event
 
