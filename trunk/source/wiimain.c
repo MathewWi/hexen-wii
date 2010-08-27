@@ -1802,7 +1802,9 @@ extern void set_my_cheat(int indx);
 BOOLEAN usergame;
 
 void I_StartFrame (void)
-{   
+{
+	// hermes
+    
 	event_t ev; // joystick event
 	event_t event; // keyboard event
 
@@ -1813,201 +1815,201 @@ void I_StartFrame (void)
 	static int w_jx=1,w_jy=1;
 
     PAD_ScanPads();
-	s32 pad_stickx = PAD_StickX(0);
-	s32 pad_sticky = PAD_StickY(0);
-	s32 pad_substickx = PAD_SubStickX(0);
-	s32 pad_substicky = PAD_SubStickY(0);
-	
+    s32 pad_stickx = PAD_StickX(0);
+    s32 pad_sticky = PAD_StickY(0);
+    s32 pad_substickx = PAD_SubStickX(0);
+    s32 pad_substicky = PAD_SubStickY(0);
+
 	WPAD_ScanPads();
 
 	wiimote_read();
-	WPAD_IR(WPAD_CHAN_0, &wmote_datas->ir);
 	ev.type = ev_joystick;
 	ev.data1 =  0;
 	ev.data2 =  0;
 	ev.data3 =  0;
 
 
-	/*Cheat stuff
+        /*Cheat stuff
 
-	if(new_pad & WPAD_BUTTON_A) {new_pad &=~ WPAD_BUTTON_A; set_my_cheat(4);wiimote_scr_info&=2;}//All Weapons
-	if(new_pad & WPAD_BUTTON_PLUS) {new_pad &=~ WPAD_BUTTON_PLUS; set_my_cheat(2);wiimote_scr_info&=2;}//God Mode
-	if(new_pad & WPAD_BUTTON_MINUS) {new_pad &=~ WPAD_BUTTON_MINUS; set_my_cheat(5);wiimote_scr_info&=2;}//Full Health
-	if(new_pad & WPAD_BUTTON_1) {new_pad &=~ WPAD_BUTTON_1; set_my_cheat(6);wiimote_scr_info&=2;}//All Keys 
-	if(new_pad & WPAD_BUTTON_2) {new_pad &=~ WPAD_BUTTON_2; set_my_cheat(9);wiimote_scr_info&=2;}//All Artifacts
-			
-	*/
+        if(new_pad & WPAD_BUTTON_A) {new_pad &=~ WPAD_BUTTON_A; set_my_cheat(4);wiimote_scr_info&=2;}//All Weapons
+        if(new_pad & WPAD_BUTTON_PLUS) {new_pad &=~ WPAD_BUTTON_PLUS; set_my_cheat(2);wiimote_scr_info&=2;}//God Mode
+        if(new_pad & WPAD_BUTTON_MINUS) {new_pad &=~ WPAD_BUTTON_MINUS; set_my_cheat(5);wiimote_scr_info&=2;}//Full Health
+        if(new_pad & WPAD_BUTTON_1) {new_pad &=~ WPAD_BUTTON_1; set_my_cheat(6);wiimote_scr_info&=2;}//All Keys 
+        if(new_pad & WPAD_BUTTON_2) {new_pad &=~ WPAD_BUTTON_2; set_my_cheat(9);wiimote_scr_info&=2;}//All Artifacts
+                        
+        */
 
-	wiimote_scr_info&=1;
+        wiimote_scr_info&=1;
+
 
     //Wiimote + Nunchuk Controls
     if(wmote_datas && wmote_datas->exp.type==WPAD_EXP_NUNCHUK)
-	{
-		// Menu
-		if(new_pad & WPAD_BUTTON_HOME) k_esc=1;
+        {
+                // Menu
+                if(new_pad & WPAD_BUTTON_HOME) k_esc=1;
         
-		if(!MenuActive){
-		// stick
-		//Up
-		if(wmote_datas->exp.nunchuk.js.pos.y> (wmote_datas->exp.nunchuk.js.center.y+J_DEATHZ))
-			{time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 1) k_up=1; w_jy&= ~1; ev.data3 = -1;} else w_jy|=1;
-		//Down
-		if(wmote_datas->exp.nunchuk.js.pos.y< (wmote_datas->exp.nunchuk.js.center.y-J_DEATHZ))
-			{time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 2) k_down=1; w_jy&= ~2;ev.data3 = 1;} else w_jy|=2;
+                if(!MenuActive){
+                // stick
+                //Up
+                if(wmote_datas->exp.nunchuk.js.pos.y> (wmote_datas->exp.nunchuk.js.center.y+J_DEATHZ))
+                        {time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 1) k_up=1; w_jy&= ~1; ev.data3 = -1;} else w_jy|=1;
+                //Down
+                if(wmote_datas->exp.nunchuk.js.pos.y< (wmote_datas->exp.nunchuk.js.center.y-J_DEATHZ))
+                        {time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 2) k_down=1; w_jy&= ~2;ev.data3 = 1;} else w_jy|=2;
         //Left Strafe
-		if((wmote_datas->exp.nunchuk.js.ang>=270-45 && wmote_datas->exp.nunchuk.js.ang<=270+45) && wmote_datas->exp.nunchuk.js.mag>=0.9)
-			{k_left=1; k_alt=1;}
-		//Right Strafe
-		if((wmote_datas->exp.nunchuk.js.ang>=90-45 && wmote_datas->exp.nunchuk.js.ang<=90+45) && wmote_datas->exp.nunchuk.js.mag>=0.9) 
-			{k_right=1;k_alt=1;}
-		}
-		
-        if(!MenuActive){	
-		//Turning via IR
-		//Right
-		if(wmote_datas->ir.x > 350)
-			{time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jx & 1) k_right=1; w_jx&= ~1; ev.data2 = 1;} 
-		else w_jx|=1;
-		//Left
-		if(wmote_datas->ir.x < 290)
-			{time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jx & 2) k_left=1; w_jx&= ~2;ev.data2 = -1;} 
-		else w_jx|=2;
-		//Up
-		if(wmote_datas->ir.y < 140)
-			k_pag_down=1;
-		//Down
-		if(wmote_datas->ir.y > 340)
-		    k_del=1;
-		}
-		
-		if(MenuActive){
-		if(WPAD_ButtonsDown(0)&WPAD_BUTTON_DOWN)
-		{time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 2) k_down=1; w_jy&= ~2;ev.data3 = 1;} else w_jy|=2;
-		if(WPAD_ButtonsDown(0)&WPAD_BUTTON_UP)
-		{time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 1) k_up=1; w_jy&= ~1; ev.data3 = -1;} else w_jy|=1;
-		}
-		
-		if(old_pad & WPAD_NUNCHUK_BUTTON_Z) ev.data1|=4; // Run
-		
-		// Jump
-		if(new_pad & WPAD_NUNCHUK_BUTTON_C) k_jump=1;
+                if((wmote_datas->exp.nunchuk.js.ang>=270-45 && wmote_datas->exp.nunchuk.js.ang<=270+45) && wmote_datas->exp.nunchuk.js.mag>=0.9)
+                        {k_left=1; k_alt=1;}
+                //Right Strafe
+                if((wmote_datas->exp.nunchuk.js.ang>=90-45 && wmote_datas->exp.nunchuk.js.ang<=90+45) && wmote_datas->exp.nunchuk.js.mag>=0.9) 
+                        {k_right=1;k_alt=1;}
+                }
+                
+        if(!MenuActive){        
+                //Turning via IR
+                //Right
+                if(wmote_datas->ir.x > 350)
+                        {time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jx & 1) k_right=1; w_jx&= ~1; ev.data2 = 1;} 
+                else w_jx|=1;
+                //Left
+                if(wmote_datas->ir.x < 290)
+                        {time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jx & 2) k_left=1; w_jx&= ~2;ev.data2 = -1;} 
+                else w_jx|=2;
+                //Up
+                if(wmote_datas->ir.y < 140)
+                        k_pag_down=1;
+                //Down
+                if(wmote_datas->ir.y > 340)
+                    k_del=1;
+                }
+                
+                if(MenuActive){
+                if(WPAD_ButtonsDown(0)&WPAD_BUTTON_DOWN)
+                {time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 2) k_down=1; w_jy&= ~2;ev.data3 = 1;} else w_jy|=2;
+                if(WPAD_ButtonsDown(0)&WPAD_BUTTON_UP)
+                {time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 1) k_up=1; w_jy&= ~1; ev.data3 = -1;} else w_jy|=1;
+                }
+                
+                if(old_pad & WPAD_NUNCHUK_BUTTON_Z) ev.data1|=4; // Run
+                
+                // Jump
+                if(new_pad & WPAD_NUNCHUK_BUTTON_C) k_jump=1;
 
-		// Map
-		if(new_pad & WPAD_BUTTON_1) k_tab=1;
+                // Map
+                if(new_pad & WPAD_BUTTON_1) k_tab=1;
 
-		// Select alphanumeric character (for naming saves)
-		if(MenuActive){
-		if(old_pad & WPAD_NUNCHUK_BUTTON_Z)
-			{
-			if(new_pad & WPAD_BUTTON_LEFT) k_1=1;
-			if(new_pad & WPAD_BUTTON_UP) k_2=1;
-			if(new_pad & WPAD_BUTTON_RIGHT) k_3=1;
-			if(new_pad & WPAD_BUTTON_DOWN) k_4=1;
-			}
-		}
-		
-		//Change Weapon
-		if(!MenuActive){
-			if(new_pad & WPAD_BUTTON_LEFT) k_1=1;
-			if(new_pad & WPAD_BUTTON_UP) k_2=1;
-			if(new_pad & WPAD_BUTTON_RIGHT) k_3=1;
-			if(new_pad & WPAD_BUTTON_DOWN) k_4=1;
-		}
+                // Select alphanumeric character (for naming saves)
+                if(MenuActive){
+                if(old_pad & WPAD_NUNCHUK_BUTTON_Z)
+                        {
+                        if(new_pad & WPAD_BUTTON_LEFT) k_1=1;
+                        if(new_pad & WPAD_BUTTON_UP) k_2=1;
+                        if(new_pad & WPAD_BUTTON_RIGHT) k_3=1;
+                        if(new_pad & WPAD_BUTTON_DOWN) k_4=1;
+                        }
+                }
+                
+                //Change Weapon
+                if(!MenuActive){
+                        if(new_pad & WPAD_BUTTON_LEFT) k_1=1;
+                        if(new_pad & WPAD_BUTTON_UP) k_2=1;
+                        if(new_pad & WPAD_BUTTON_RIGHT) k_3=1;
+                        if(new_pad & WPAD_BUTTON_DOWN) k_4=1;
+                }
         
-		if(!MenuActive){
-		if(((new_pad & WPAD_BUTTON_A) && (old_pad & WPAD_BUTTON_B)))	
-			{k_enter=1;}  // use object
-		else
-			{
-			if(old_pad & WPAD_BUTTON_A) {ev.data1|=2;}  // open
-			if(old_pad & WPAD_BUTTON_B) ev.data1|=1; // fire
-			}
-		}
+                if(!MenuActive){
+                if(((new_pad & WPAD_BUTTON_A) && (old_pad & WPAD_BUTTON_B)))    
+                        {k_enter=1;}  // use object
+                else
+                        {
+                        if(old_pad & WPAD_BUTTON_A) {ev.data1|=2;}  // open
+                        if(old_pad & WPAD_BUTTON_B) ev.data1|=1; // fire
+                        }
+                }
+                
+                if(MenuActive){
+                if(WPAD_ButtonsDown(0) & WPAD_BUTTON_A) {k_enter=1;}  // Select Option
+                }
+
+                if(new_pad & WPAD_BUTTON_MINUS) k_leftsel=1; // sel left object
+                if(new_pad & WPAD_BUTTON_PLUS) k_rightsel=1; // sel right object
+
+                H2_PostEvent (&ev);
+
+                }
+        //End Wiimote and Nunchuk Controls
 		
-		if(MenuActive){
-		if(WPAD_ButtonsDown(0) & WPAD_BUTTON_A) {k_enter=1;}  // Select Option
-		}
-
-		if(new_pad & WPAD_BUTTON_MINUS) k_leftsel=1; // sel left object
-		if(new_pad & WPAD_BUTTON_PLUS) k_rightsel=1; // sel right object
-
-		H2_PostEvent (&ev);
-
-		}
-	//End Wiimote and Nunchuk Controls
-	
 	//Classic Controller Controls
-	
-		if(wmote_datas && wmote_datas->exp.type==WPAD_EXP_CLASSIC)
-		{
+       
+                if(wmote_datas && wmote_datas->exp.type==WPAD_EXP_CLASSIC)
+                {
 
-		// Menu
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_HOME) k_esc=1;
+                // Menu
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_HOME) k_esc=1;
 
-		// Movement
-		//Down
-		if((wmote_datas->exp.classic.ljs.ang>=180-45 && wmote_datas->exp.classic.ljs.ang<=180+45) && wmote_datas->exp.classic.ljs.mag>=0.9)
-			{time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 2) k_down=1; w_jy&= ~2;ev.data3 = 1;}
+
+                // Movement
+                //Down
+                if((wmote_datas->exp.classic.ljs.ang>=180-45 && wmote_datas->exp.classic.ljs.ang<=180+45) && wmote_datas->exp.classic.ljs.mag>=0.9)
+                        {time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 2) k_down=1; w_jy&= ~2;ev.data3 = 1;}
         else w_jy|=2;
-		//Up
-		if((wmote_datas->exp.classic.ljs.ang>=360-45 || wmote_datas->exp.classic.ljs.ang<=45) && wmote_datas->exp.classic.ljs.mag>=0.9)
-			{time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 1) k_up=1; w_jy&= ~1; ev.data3 = -1;} 
-		else w_jy|=1;
-		//Left Strafe
-		if((wmote_datas->exp.classic.ljs.ang>=270-45 && wmote_datas->exp.classic.ljs.ang<=270+45) && wmote_datas->exp.classic.ljs.mag>=0.9)
-			{k_left=1; k_alt=1;}
-		//Right Strafe
-		if((wmote_datas->exp.classic.ljs.ang>=90-45 && wmote_datas->exp.classic.ljs.ang<=90+45) && wmote_datas->exp.classic.ljs.mag>=0.9) 
-			{k_right=1;k_alt=1;}
+                //Up
+                if((wmote_datas->exp.classic.ljs.ang>=360-45 || wmote_datas->exp.classic.ljs.ang<=45) && wmote_datas->exp.classic.ljs.mag>=0.9)
+                        {time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jy & 1) k_up=1; w_jy&= ~1; ev.data3 = -1;}
+                else w_jy|=1;
+                //Left Strafe
+                if((wmote_datas->exp.classic.ljs.ang>=270-45 && wmote_datas->exp.classic.ljs.ang<=270+45) && wmote_datas->exp.classic.ljs.mag>=0.9)
+                        {k_left=1; k_alt=1;}
+                //Right Strafe
+                if((wmote_datas->exp.classic.ljs.ang>=90-45 && wmote_datas->exp.classic.ljs.ang<=90+45) && wmote_datas->exp.classic.ljs.mag>=0.9)
+                        {k_right=1;k_alt=1;}
+               
+                //Turning
+                //Right
+                if((wmote_datas->exp.classic.rjs.ang>=90-45 && wmote_datas->exp.classic.rjs.ang<=90+45) && wmote_datas->exp.classic.rjs.mag>=0.9)
+                        {time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jx & 1) k_right=1; w_jx&= ~1; ev.data2 = 1;}
+                else w_jx|=1;
+                //Left
+                if((wmote_datas->exp.classic.rjs.ang>=270-45 && wmote_datas->exp.classic.rjs.ang<=270+45) && wmote_datas->exp.classic.rjs.mag>=0.9)
+                        {time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jx & 2) k_left=1; w_jx&= ~2;ev.data2 = -1;}
+                else w_jx|=2;
+                //Up
+                if((wmote_datas->exp.classic.rjs.ang>=360-45 || wmote_datas->exp.classic.rjs.ang<=45) && wmote_datas->exp.classic.rjs.mag>=0.9)
+                        k_pag_down=1;
+                //Down
+                if((wmote_datas->exp.classic.rjs.ang>=180-45 && wmote_datas->exp.classic.rjs.ang<=180+45) && wmote_datas->exp.classic.rjs.mag>=0.9)
+                    k_del=1;
+
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_ZL || WPAD_ButtonsHeld(0)&WPAD_CLASSIC_BUTTON_ZL) ev.data1|=4; // Run
+
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_ZR) k_tab=1; //Toggle Map
+
+                // Change weapon
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_LEFT)  k_1=1;
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_RIGHT) k_2=1;
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_UP)    k_3=1;
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_DOWN)  k_4=1;
+               
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_Y) k_jump = 1; //Jump
+
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_X)   {k_enter=1;}  // Use Object
+               
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_A) {ev.data1|=2;}  // Open
+               
+                if((WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_B) || (WPAD_ButtonsHeld(0)&WPAD_CLASSIC_BUTTON_B)) ev.data1|=1; // Fire
+                       
+
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_FULL_L) k_leftsel=1; // Select left object
+                if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_FULL_R) k_rightsel=1; // Select right object
+
+                H2_PostEvent (&ev);
+
+                }
+       
+        //End Classic Controller Controls
 		
-		//Turning
-		//Right
-		if((wmote_datas->exp.classic.rjs.ang>=90-45 && wmote_datas->exp.classic.rjs.ang<=90+45) && wmote_datas->exp.classic.rjs.mag>=0.9)
-			{time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jx & 1) k_right=1; w_jx&= ~1; ev.data2 = 1;} 
-		else w_jx|=1;
-		//Left
-		if((wmote_datas->exp.classic.rjs.ang>=270-45 && wmote_datas->exp.classic.rjs.ang<=270+45) && wmote_datas->exp.classic.rjs.mag>=0.9)
-			{time_sleep=TIME_SLEEP_SCR;SetVideoSleep(0);if(w_jx & 2) k_left=1; w_jx&= ~2;ev.data2 = -1;} 
-		else w_jx|=2;
-		//Up
-		if((wmote_datas->exp.classic.rjs.ang>=360-45 || wmote_datas->exp.classic.rjs.ang<=45) && wmote_datas->exp.classic.rjs.mag>=0.9)
-			k_pag_down=1;
-		//Down
-		if((wmote_datas->exp.classic.rjs.ang>=180-45 && wmote_datas->exp.classic.rjs.ang<=180+45) && wmote_datas->exp.classic.rjs.mag>=0.9)
-		    k_del=1;
-
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_X || WPAD_ButtonsHeld(0)&WPAD_CLASSIC_BUTTON_X) ev.data1|=4; // Run
-
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_ZR) k_tab=1; //Toggle Map
-
-		// Change weapon
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_LEFT)  k_1=1;
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_RIGHT) k_2=1;
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_UP)    k_3=1;
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_DOWN)  k_4=1;
-		
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_Y) k_jump = 1; //Jump
-
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_ZL)	 {k_enter=1;}  // Use Object
-		
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_A) {ev.data1|=2;}  // Open
-		
-		if((WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_B) || (WPAD_ButtonsHeld(0)&WPAD_CLASSIC_BUTTON_B)) ev.data1|=1; // Fire
-			
-
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_FULL_R) k_leftsel=1; // Select left object
-		if(WPAD_ButtonsDown(0)&WPAD_CLASSIC_BUTTON_FULL_L) k_rightsel=1; // Select right object
-
-		H2_PostEvent (&ev);
-
-		}
-	
-	//End Classic Controller Controls
-	
-	
 	//GC Controls
 	
-	if(wmote_datas->exp.type!=WPAD_EXP_CLASSIC && wmote_datas->exp.type!=WPAD_EXP_NUNCHUK)
+	if(!wmote_datas || (wmote_datas->exp.type!=WPAD_EXP_CLASSIC && wmote_datas->exp.type!=WPAD_EXP_NUNCHUK))
 	{
 	
 		// Menu
@@ -2042,14 +2044,14 @@ void I_StartFrame (void)
 		if(PAD_ButtonsDown(0)&PAD_TRIGGER_L || PAD_ButtonsHeld(0)&PAD_TRIGGER_L) ev.data1|=4; // Run
 
 		if(PAD_ButtonsDown(0)&PAD_TRIGGER_Z) k_tab=1; //Toggle Map
+		
+		if(PAD_ButtonsDown(0)&PAD_BUTTON_Y) { k_jump = 1; }
 
 		// Change weapon
 		if(PAD_ButtonsDown(0)&PAD_BUTTON_LEFT)  k_1=1;
 		if(PAD_ButtonsDown(0)&PAD_BUTTON_RIGHT) k_2=1;
 		if(PAD_ButtonsDown(0)&PAD_BUTTON_UP)    k_3=1;
 		if(PAD_ButtonsDown(0)&PAD_BUTTON_DOWN)  k_4=1;
-		
-		if(PAD_ButtonsDown(0)&PAD_BUTTON_Y) k_jump = 1;//Jump
 
 		if(PAD_ButtonsDown(0)&PAD_BUTTON_X)	 {k_enter=1;}  // Use Object
 		
@@ -2058,14 +2060,16 @@ void I_StartFrame (void)
 		if((PAD_ButtonsDown(0)&PAD_BUTTON_A) || (PAD_ButtonsHeld(0)&PAD_BUTTON_A)) ev.data1|=1; // Fire
 			
 
-		if(PAD_ButtonsDown(0)&PAD_TRIGGER_R) k_leftsel=1; // Select left object
-		//if(PAD_ButtonsDown(0)&PAD_TRIGGER_L) k_rightsel=1; // Select right object
+		//if(PAD_ButtonsDown(0)&PAD_TRIGGER_L) k_leftsel=1; // Select left object
+		if(PAD_ButtonsDown(0)&PAD_TRIGGER_R) k_rightsel=1; // Select right object
 
 		H2_PostEvent (&ev);
 	
 	}
 	
 	//End GC Controls
+
+
 
 	// jump
 	event.data1 = '/';
@@ -2154,6 +2158,7 @@ void I_StartFrame (void)
 	event.data1 = KEY_HOME;
 	if(k_fly==-2) event.type = ev_keydown; else event.type = ev_keyup;
 	H2_PostEvent(&event);
+
 
 }
 
